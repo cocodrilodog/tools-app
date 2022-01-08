@@ -144,6 +144,10 @@
 		/// Deletes the file at <see cref="FilePath"/>, if any.
 		/// </summary>
 		public void Delete() {
+#if CB_CODE
+			Debug.Log("CB Delete");
+			CBSavegame.Instance.Delete(FilePath);
+#else
 			if (RuntimeScriptableObject != null) {
 				if(Application.isPlaying) {
 					Destroy(RuntimeScriptableObject);
@@ -154,6 +158,7 @@
 			if (File.Exists(fullPath)) {
 				File.Delete(fullPath);
 			}
+#endif
 		}
 
 		#endregion
@@ -178,6 +183,8 @@
 		private string CrossPlatformFilePath {
 			get {
 				string path = "";
+#if CB_CODE
+#else
 				if (!string.IsNullOrEmpty(FilePath)) {
 					// Allow the developer to type the path separated with "/"
 					string[] pathSteps = FilePath.Split('/');
@@ -189,6 +196,7 @@
 					}
 					return path;
 				}
+#endif
 				return path;
 			}
 		}
@@ -207,23 +215,37 @@
 		}
 
 		private ScriptableObject Load(Type type) {
+#if CB_CODE
+			Debug.Log("CB Load");
+			var jsonString = CBSavegame.Instance.Load(FilePath);
+			if (!string.IsNullOrEmpty(jsonString))
+            {
+				JSON json = JSON.ParseString(jsonString);
+				return (ScriptableObject)json.Deserialize(type, AssetsGUID);
+			}
+#else
 			if (File.Exists(CrossPlatformFilePath)) {
 				string jsonString = File.ReadAllText(CrossPlatformFilePath);
 				JSON json = JSON.ParseString(jsonString);
 				return (ScriptableObject)json.Deserialize(type, AssetsGUID);
 			}
+#endif
 			return null;
 		}
 
 		private void Save(ScriptableObject runtimeScriptableObject, string path) {
-
+#if CB_CODE
+			Debug.Log("CB Save");
+			JSON json = JSON.Serialize(runtimeScriptableObject, AssetsGUID);
+			CBSavegame.Instance.Save(FilePath, json.CreatePrettyString());
+#else
 			// Create the directory if it doesn't exists
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 
 			// Save the data
 			JSON json = JSON.Serialize(runtimeScriptableObject, AssetsGUID);
 			File.WriteAllText(path, json.CreatePrettyString());
-
+#endif
 		}
 
 		#endregion
