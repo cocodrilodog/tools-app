@@ -1,4 +1,5 @@
-﻿namespace CocodriloDog.App {
+﻿
+namespace CocodriloDog.App {
 
 	using Leguar.TotalJSON;
 	using System;
@@ -146,7 +147,7 @@
 		public void Delete() {
 #if CB_CODE
 			Debug.Log("CB Delete");
-			CBSavegame.Instance.Delete(FilePath);
+			CasualBrothers.Platforms.SavegameManager.Instance.Delete(FilePath);
 #else
 			if (RuntimeScriptableObject != null) {
 				if(Application.isPlaying) {
@@ -217,7 +218,7 @@
 		private ScriptableObject Load(Type type) {
 #if CB_CODE
 			Debug.Log("CB Load");
-			var jsonString = CBSavegame.Instance.Load(FilePath);
+			var jsonString = CasualBrothers.Platforms.SavegameManager.Instance.Load(FilePath);
 			if (!string.IsNullOrEmpty(jsonString))
             {
 				JSON json = JSON.ParseString(jsonString);
@@ -237,7 +238,7 @@
 #if CB_CODE
 			Debug.Log("CB Save");
 			JSON json = JSON.Serialize(runtimeScriptableObject, AssetsGUID);
-			CBSavegame.Instance.Save(FilePath, json.CreatePrettyString());
+			CasualBrothers.Platforms.SavegameManager.Instance.Save(FilePath, json.CreatePrettyString());
 #else
 			// Create the directory if it doesn't exists
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
