@@ -19,7 +19,7 @@
 	public class SceneLoader : MonoSingleton<SceneLoader> {
 		public delegate bool IsReadyCallback();
 		public List<IsReadyCallback> isReadyCallbacks { get; set; } = new List<IsReadyCallback>();
-		public bool IsReady { get; private set; }
+		public bool IsReady { get; private set; } = true;
 
 		#region Public Static Methods
 
