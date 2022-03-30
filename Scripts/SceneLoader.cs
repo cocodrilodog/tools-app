@@ -17,7 +17,9 @@
 	/// the download progress.
 	/// </remarks>
 	public class SceneLoader : MonoSingleton<SceneLoader> {
-
+		public delegate bool IsReadyCallback();
+		public List<IsReadyCallback> isReadyCallbacks { get; set; } = new List<IsReadyCallback>();
+		public bool IsReady { get; private set; }
 
 		#region Public Static Methods
 
@@ -262,6 +264,8 @@
 
 		private IEnumerator _LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool autoActivate = true) {
 
+			IsReady = false;
+
 			m_AsyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
 			m_AsyncOperation.allowSceneActivation = autoActivate;
 
@@ -275,6 +279,20 @@
 				UIController.OnLoadProgress(m_AsyncOperation.progress);
 				yield return null;
 			}
+
+			while (true)
+			{
+				var is_ready = true;
+				foreach(var callback in isReadyCallbacks)
+                {
+					is_ready = callback();
+					if (!is_ready) break;
+				}
+				if (is_ready) break;
+				yield return null;
+			}
+			isReadyCallbacks.Clear();
+			IsReady = true;
 
 			HideUI(true);
 
