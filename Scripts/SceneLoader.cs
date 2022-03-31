@@ -9,6 +9,14 @@
 	using UnityEngine.SceneManagement;
 	using UnityEngine.UI;
 
+
+	#region Small Types
+
+	public delegate bool IsReadyCallback();
+
+	#endregion
+
+
 	/// <summary>
 	/// A singleton that can load scenes asynchronously and display the load progress.
 	/// </summary>
@@ -17,9 +25,21 @@
 	/// the download progress.
 	/// </remarks>
 	public class SceneLoader : MonoSingleton<SceneLoader> {
-		public delegate bool IsReadyCallback();
-		public List<IsReadyCallback> isReadyCallbacks { get; set; } = new List<IsReadyCallback>();
-		public bool IsReady { get; private set; } = true;
+		
+
+		#region Public Static Properties
+
+		public static bool IsReady {
+			get {
+				if (Instance != null) {
+					return Instance.m_IsReady;
+				}
+				return false;
+			}
+		}
+
+		#endregion
+
 
 		#region Public Static Methods
 
@@ -81,6 +101,12 @@
 		public static void ActivateScene() {
 			if (Instance != null) {
 				Instance._ActivateScene();
+			}
+		}
+
+		public static void AddLoadDependency(IsReadyCallback loadDependency) {
+			if(Instance != null) {
+				Instance._AddLoadDependency(loadDependency);
 			}
 		}
 
@@ -175,7 +201,7 @@
 		#endregion
 
 
-		#region Private Fields
+		#region Private Constants
 
 		private const string AlphaKey = "Alpha";
 
@@ -200,6 +226,11 @@
 
 		[NonSerialized]
 		private bool m_IsSceneLoaded;
+
+		private List<IsReadyCallback> m_LoadDependencies = new List<IsReadyCallback>();
+
+		[NonSerialized]
+		private bool m_IsReady;
 
 		#endregion
 
@@ -257,6 +288,10 @@
 			m_AsyncOperation.allowSceneActivation = true;
 		}
 
+		private void _AddLoadDependency(IsReadyCallback loadDependency) {
+			m_LoadDependencies.Add(loadDependency);
+		}
+
 		private void LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool autoActivate = true) {
 			UIController.OnLoadStart();
 			StartCoroutine(_LoadSceneAsync(sceneName, loadSceneMode, autoActivate));
@@ -264,7 +299,7 @@
 
 		private IEnumerator _LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool autoActivate = true) {
 
-			IsReady = false;
+			m_IsReady = false;
 
 			m_AsyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
 			m_AsyncOperation.allowSceneActivation = autoActivate;
@@ -280,23 +315,21 @@
 				yield return null;
 			}
 
-			while (true)
-			{
-				var is_ready = true;
-				foreach(var callback in isReadyCallbacks)
-                {
-					is_ready = callback();
-					if (!is_ready) break;
+			while (true) {
+				var isReady = true;
+				foreach (var callback in m_LoadDependencies) {
+					isReady = callback();
+					if (!isReady) break;
 				}
-				if (is_ready) break;
+				if (isReady) break;
 				yield return null;
 			}
-			isReadyCallbacks.Clear();
-			IsReady = true;
+			m_LoadDependencies.Clear();
+			m_IsReady = true;
 
 			HideUI(true);
 
-			// Reset fields
+			// Now that all is ready, reset fields
 			UpdateIsSceneLoaded(false);
 			m_AsyncOperation = null;
 		}
