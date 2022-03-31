@@ -32,7 +32,7 @@
 		public static bool IsReady {
 			get {
 				if (Instance != null) {
-					return Instance.m_IsReady;
+					return Instance.m_AreDependenciesReady;
 				}
 				return false;
 			}
@@ -230,7 +230,7 @@
 		private List<IsReadyCallback> m_LoadDependencies = new List<IsReadyCallback>();
 
 		[NonSerialized]
-		private bool m_IsReady;
+		private bool m_AreDependenciesReady = true;
 
 		#endregion
 
@@ -299,7 +299,7 @@
 
 		private IEnumerator _LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool autoActivate = true) {
 
-			m_IsReady = false;
+			m_AreDependenciesReady = false;
 
 			m_AsyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
 			m_AsyncOperation.allowSceneActivation = autoActivate;
@@ -325,7 +325,7 @@
 				yield return null;
 			}
 			m_LoadDependencies.Clear();
-			m_IsReady = true;
+			m_AreDependenciesReady = true;
 
 			HideUI(true);
 
