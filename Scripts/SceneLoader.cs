@@ -361,6 +361,8 @@
 		}
 
 		private void ShowUI(bool animated, Action onComplete = null) {
+			CasualBrothers.Platforms.ControlsBlocker.IsLoading = true;
+
 			UIController.gameObject.SetActive(true);
 			if (animated) {
 				UIController.OnFadeIn(FadeInTime);
@@ -376,6 +378,8 @@
 		}
 
 		private void HideUI(bool animated, Action onComplete = null) {
+			CasualBrothers.Platforms.ControlsBlocker.IsLoading = false;
+
 			if (animated) {
 				UIController.OnFadeOut(FadeOutTime);
 				Animate.GetMotion(this, AlphaKey, v => UIController.CanvasGroup.alpha = v)
