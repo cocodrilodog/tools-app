@@ -145,16 +145,16 @@ namespace CocodriloDog.App {
 		/// Deletes the file at <see cref="FilePath"/>, if any.
 		/// </summary>
 		public void Delete() {
-#if CB_CODE
-			Debug.Log("CB Delete");
-			CasualBrothers.Platforms.SavegameManager.Instance.Delete(FilePath);
-#else
 			if (RuntimeScriptableObject != null) {
 				if(Application.isPlaying) {
 					Destroy(RuntimeScriptableObject);
 				}
 				RuntimeScriptableObject = null;
 			}
+#if CB_CODE
+			Debug.Log("CB Delete");
+			CasualBrothers.Platforms.SavegameManager.Instance.Delete(FilePath);
+#else
 			string fullPath = Path.Combine(Application.persistentDataPath, FilePath);
 			if (File.Exists(fullPath)) {
 				File.Delete(fullPath);
