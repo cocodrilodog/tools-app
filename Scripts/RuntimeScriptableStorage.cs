@@ -162,6 +162,19 @@ namespace CocodriloDog.App {
 #endif
 		}
 
+		public void Reset()
+		{
+			if (RuntimeScriptableObject != null)
+			{
+				if (Application.isPlaying)
+				{
+					Destroy(RuntimeScriptableObject);
+				}
+				RuntimeScriptableObject = null;
+			}
+		}
+
+
 		#endregion
 
 

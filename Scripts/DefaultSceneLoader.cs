@@ -25,16 +25,7 @@
 		#region Unity Methods
 
 		private void Start() {
-#if CB_CODE
-			StartCoroutine(WaitUntilReadSavegame());
-			IEnumerator WaitUntilReadSavegame()
-			{
-				yield return new WaitUntil(() => CasualBrothers.Platforms.SavegameManager.Instance.IsReady);
-				SceneLoader.LoadScene(DefaultSceneName, LoadSceneMode, AutoActivate);
-			}
-#else
 			SceneLoader.LoadScene(DefaultSceneName, LoadSceneMode, AutoActivate);
-#endif
 		}
 
         #endregion
