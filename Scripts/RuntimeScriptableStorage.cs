@@ -230,7 +230,7 @@ namespace CocodriloDog.App {
 
 		private ScriptableObject Load(Type type) {
 #if CB_CODE
-			Debug.Log("CB Load");
+			//Debug.Log("CB Load");
 			var jsonString = CasualBrothers.Platforms.SavegameManager.Instance.Load(FilePath);
 			if (!string.IsNullOrEmpty(jsonString))
             {
@@ -249,7 +249,7 @@ namespace CocodriloDog.App {
 
 		private void Save(ScriptableObject runtimeScriptableObject, string path) {
 #if CB_CODE
-			Debug.Log("CB Save");
+			//Debug.Log("CB Save");
 			JSON json = JSON.Serialize(runtimeScriptableObject, AssetsGUID);
 			CasualBrothers.Platforms.SavegameManager.Instance.Save(FilePath, json.CreatePrettyString());
 #else
