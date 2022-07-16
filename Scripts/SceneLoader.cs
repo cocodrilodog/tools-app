@@ -8,6 +8,7 @@
 	using UnityEngine;
 	using UnityEngine.SceneManagement;
 	using UnityEngine.UI;
+	using UnityEngine.AddressableAssets;
 
 
 	#region Small Types
@@ -25,7 +26,15 @@
 	/// the download progress.
 	/// </remarks>
 	public class SceneLoader : MonoSingleton<SceneLoader> {
-		
+
+		[Serializable]
+		public class SceneRef
+        {
+			public string name;
+			public AssetReference scene;
+		};
+		public List<SceneRef> scenes;
+		Dictionary<string, AssetReference> mapScenes = new Dictionary<string, AssetReference>();
 
 		#region Public Static Properties
 
@@ -156,6 +165,8 @@
 
 		protected override void Awake() {
 			base.Awake();
+			foreach (var scene in scenes) if (!scene.name.Contains("___") && scene.scene != null) mapScenes.Add(scene.name, scene.scene);
+
 			DontDestroyOnLoad(gameObject);
 			DisableCanvases();
 			HideUI(false);
@@ -301,18 +312,30 @@
 
 			m_AreDependenciesReady = false;
 
-			m_AsyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-			m_AsyncOperation.allowSceneActivation = autoActivate;
+			if (mapScenes.ContainsKey(sceneName))
+			{
+				var op = mapScenes[sceneName].LoadSceneAsync();
+				yield return new WaitUntil(() => op.IsDone);
+			}
+			else
+			{
+				m_AsyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+				m_AsyncOperation.allowSceneActivation = autoActivate;
 
-			while (!m_AsyncOperation.isDone) {
-				if (m_AsyncOperation.progress < 0.9f) {
-					UpdateIsSceneLoaded(false);
-				} else {
-					UpdateIsSceneLoaded(true);
+				while (!m_AsyncOperation.isDone)
+				{
+					if (m_AsyncOperation.progress < 0.9f)
+					{
+						UpdateIsSceneLoaded(false);
+					}
+					else
+					{
+						UpdateIsSceneLoaded(true);
+					}
+					// Update the progress always, in case it reached 0.9 very fast
+					UIController.OnLoadProgress(m_AsyncOperation.progress);
+					yield return null;
 				}
-				// Update the progress always, in case it reached 0.9 very fast
-				UIController.OnLoadProgress(m_AsyncOperation.progress);
-				yield return null;
 			}
 
 			while (true) {
