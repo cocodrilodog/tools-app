@@ -165,7 +165,7 @@
 
 		protected override void Awake() {
 			base.Awake();
-			foreach (var scene in scenes) if (!scene.name.Contains("___") && scene.scene != null) mapScenes.Add(scene.name, scene.scene);
+			foreach (var scene in scenes) if (!scene.name.Contains("___") && scene.scene != null) mapScenes.Add(scene.name.ToLower(), scene.scene);
 
 			DontDestroyOnLoad(gameObject);
 			DisableCanvases();
@@ -312,9 +312,9 @@
 
 			m_AreDependenciesReady = false;
 
-			if (mapScenes.ContainsKey(sceneName))
+			if (mapScenes.ContainsKey(sceneName.ToLower()))
 			{
-				var op = mapScenes[sceneName].LoadSceneAsync();
+				var op = mapScenes[sceneName.ToLower()].LoadSceneAsync();
 				yield return new WaitUntil(() => op.IsDone);
 			}
 			else
