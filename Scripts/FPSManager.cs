@@ -16,6 +16,7 @@
 	#endregion
 
 	// TODO: This may be a good candidate for a `Settings` package
+	// Discussion about WebGL: https://discussions.unity.com/t/targetframerate-not-working-in-2021-3-1-lts-webgl/881482
 	public class FPSManager : MonoBehaviour {
 
 
@@ -35,6 +36,9 @@
 						Application.targetFrameRate = -1;
 						break;
 				}
+				Debug.Log($"{GetType().Name}: Target Frame Rate: {Application.targetFrameRate}, V Sync Count: {QualitySettings.vSyncCount} for platform {Application.platform}");
+			} else {
+				Debug.Log($"{GetType().Name}: Din't find configuration for platform {Application.platform}");
 			}
 		}
 
