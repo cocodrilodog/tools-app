@@ -15,7 +15,10 @@ MonoBehaviour:
   m_Prefabs:
   - {fileID: 5086928110899891034, guid: 907ad4f9895b94dfd8941e9bfacd27da, type: 3}
   - {fileID: 7348244804412677562, guid: ffab7f073cc724a9cb94e0543ca8c190, type: 3}
+  - {fileID: 780794389516376095, guid: ab91431490de7eb4daac4b0c1996a5d5, type: 3}
   m_EditorInstantiationMode: 1
   m_SpecificScenes:
   - {fileID: 102900000, guid: ee4c312ce97664c828464a18205d3221, type: 3}
+  - {fileID: 102900000, guid: 0ea2271a2072d424c9e4ed76e6cff83d, type: 3}
+  - {fileID: 102900000, guid: 83625a1125a5a964ca90bfe5b2b00b42, type: 3}
   m_ExceptionScenes: []

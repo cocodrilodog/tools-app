@@ -60,6 +60,7 @@ namespace CocodriloDog.App {
 
 		#region Public Methods
 
+		[Button(index:6, disableInEditMode:true)]
 		public void LoadScene() {
 			m_SceneLoader.Value.LoadScene(SceneName, LoadSceneMode, AutoActivate, AutoHideUI);
 		}

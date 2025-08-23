@@ -216,7 +216,7 @@
 		#endregion
 
 
-		#region Private Fields
+		#region Private Constants
 
 		private const string AlphaKey = "Alpha";
 
@@ -245,7 +245,7 @@
 		#endregion
 
 
-		#region Private Fields - Non Serialized
+		#region Private Properties
 
 		private Canvas[] Canvases {
 			get {

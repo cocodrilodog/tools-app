@@ -2,6 +2,8 @@
     "name": "CocodriloDog.App.Editor",
     "rootNamespace": "",
     "references": [
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:69448af7b92c7f342b298e06a37122aa",
         "GUID:1968ec4f31de017459aaaed17aa6b6e0",
         "GUID:74925789f0adcbb48aa09aaa4edcde33",
         "GUID:953430efde7e3d447ac2ef4cd77fbc00"
