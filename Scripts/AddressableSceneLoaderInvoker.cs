@@ -1,9 +1,12 @@
 namespace CocodriloDog.App {
 
 	using CocodriloDog.Core;
+	using System;
 	using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+	using UnityEngine.ResourceManagement.AsyncOperations;
+	using UnityEngine.ResourceManagement.ResourceProviders;
 	using UnityEngine.SceneManagement;
 
 	public class AddressableSceneLoaderInvoker : MonoBehaviour {
@@ -11,8 +14,14 @@ namespace CocodriloDog.App {
 
 		#region Public Methods
 
-		[Button(index:6, disableInEditMode:true)]
-		public void LoadScene() => m_SceneLoader.Value.LoadScene(m_SceneReference, m_LoadSceneMode, m_AutoActivate, m_HideUIMode);
+		[Button(index: 6, disableInEditMode: true)]
+		public void LoadScene() {
+			m_SceneLoader.Value.LoadScene(m_SceneReference, m_LoadSceneMode, m_AutoActivate, m_HideUIMode);
+		}
+
+		public void LoadScene(Action<AsyncOperationHandle<SceneInstance>> onSceneHandleReady) {
+			m_SceneLoader.Value.LoadScene(m_SceneReference, m_LoadSceneMode, m_AutoActivate, m_HideUIMode, onSceneHandleReady);
+		}
 
 		#endregion
 

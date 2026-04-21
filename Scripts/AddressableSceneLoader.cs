@@ -26,10 +26,27 @@ namespace CocodriloDog.App {
 
         #region Public Methods
 
-        public void LoadScene(AssetReferenceScene sceneReference, LoadSceneMode loadSceneMode, bool autoActivate = true, HideUIMode hideUIMode = HideUIMode.OnActivateScene) {
+		/// <summary>
+		/// Load the addressable scene.
+		/// </summary>
+		/// <param name="sceneReference">The scene reference.</param>
+		/// <param name="loadSceneMode">The load mode.</param>
+		/// <param name="autoActivate">Will the scene auto activate?</param>
+		/// <param name="hideUIMode">The hide UI mode.</param>
+		/// <param name="onSceneHandleReady">a callback that receives the scene load handle when ready.</param>
+        public void LoadScene(
+			AssetReferenceScene sceneReference, 
+			LoadSceneMode loadSceneMode, 
+			bool autoActivate = true, 
+			HideUIMode hideUIMode = HideUIMode.OnActivateScene,
+			Action<AsyncOperationHandle<SceneInstance>> onSceneHandleReady = null
+		) {
             m_UI.OnLoadProgress(0);
             EnableCanvases();
-            ShowUI(true, () => _LoadScene(sceneReference, loadSceneMode, autoActivate, hideUIMode));
+            ShowUI(true, () => {
+				var handle = _LoadScene(sceneReference, loadSceneMode, autoActivate, hideUIMode);
+				onSceneHandleReady?.Invoke(handle);
+			});
         }
 
         /// <summary>
@@ -37,9 +54,7 @@ namespace CocodriloDog.App {
         /// </summary>
         public void ActivateScene() {
             m_AsyncOperationHandle.Result.ActivateAsync();
-            // TODO: Handle Release/Unload
-            //m_AsyncOperationHandle.Release();
-        }
+		}
 
         /// <summary>
         /// Hides the loader UI.
@@ -172,13 +187,18 @@ namespace CocodriloDog.App {
 
         #region Private Methods
 
-        private void _LoadScene(AssetReferenceScene sceneReference, LoadSceneMode loadSceneMode, bool autoActivate, HideUIMode hideUIMode = HideUIMode.OnActivateScene) {
+        private AsyncOperationHandle<SceneInstance> _LoadScene(
+			AssetReferenceScene sceneReference, 
+			LoadSceneMode loadSceneMode, 
+			bool autoActivate, 
+			HideUIMode hideUIMode = HideUIMode.OnActivateScene
+		) {
 
-            m_HideUIMode = hideUIMode;
+			m_HideUIMode = hideUIMode;
             m_UI.OnLoadStart();
             m_AsyncOperationHandle = sceneReference.LoadSceneAsync(loadSceneMode, autoActivate);
 
-            StartCoroutine(TrackProgress());
+			StartCoroutine(TrackProgress());
             IEnumerator TrackProgress() {        
 
                 while (!m_AsyncOperationHandle.IsDone) {
@@ -193,12 +213,14 @@ namespace CocodriloDog.App {
                     yield return null;
 				}
 
-                if (m_HideUIMode == HideUIMode.OnActivateScene) {
+				if (m_HideUIMode == HideUIMode.OnActivateScene) {
                     m_HideUIMode = default;
                     HideUI(true);
                 }
 
             }
+
+			return m_AsyncOperationHandle;
 
         }
 
