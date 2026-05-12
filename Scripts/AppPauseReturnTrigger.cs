@@ -13,7 +13,7 @@ namespace CocodriloDog.App {
 		private void OnApplicationPause(bool pauseStatus) {
 			if (pauseStatus) {
 				m_IsInBackground = true;
-				OnPauseApp();
+				OnAppPause();
 			} else if (m_IsInBackground) {
 				m_IsInBackground = false;
 				OnReturnToApp();
@@ -23,7 +23,7 @@ namespace CocodriloDog.App {
 		private void OnApplicationFocus(bool hasFocus) {
 			if (!hasFocus) {
 				m_IsInBackground = true;
-				OnPauseApp();
+				OnAppPause();
 			} else if (m_IsInBackground) {
 				m_IsInBackground = false;
 				OnReturnToApp();
@@ -37,7 +37,7 @@ namespace CocodriloDog.App {
 
 		[UnityEventGroup("Events")]
 		[SerializeField]
-		private UnityEvent m_OnPauseApp;
+		private UnityEvent m_OnAppPause;
 
 		[UnityEventGroup("Events")]
 		[SerializeField]
@@ -56,7 +56,7 @@ namespace CocodriloDog.App {
 
 		#region Private Methods
 
-		private void OnPauseApp() => m_OnPauseApp.Invoke();
+		private void OnAppPause() => m_OnAppPause.Invoke();
 
 		private void OnReturnToApp() => m_OnReturnToApp.Invoke();
 
