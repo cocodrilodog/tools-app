@@ -8,6 +8,7 @@
 	using UnityEngine;
 	using UnityEngine.SceneManagement;
 	using UnityEngine.UI;
+	using UnityEngine.Events;
 
 	/// <summary>
 	/// A MonoBehaviour that can load scenes asynchronously and display the load progress.
@@ -228,6 +229,16 @@
 		[SerializeField]
 		private AbstractSceneLoaderUI m_UI;
 
+		[Space]
+
+		[UnityEventGroup("Events")]
+		[SerializeField]
+		private UnityEvent m_OnEnableCanvases;
+
+		[UnityEventGroup("Events")]
+		[SerializeField]
+		private UnityEvent m_OnDisableCanvases;
+
 		#endregion
 
 
@@ -310,12 +321,14 @@
 			foreach (Canvas canvas in Canvases) {
 				canvas.enabled = true;
 			}
+			m_OnEnableCanvases.Invoke();
 		}
 
 		private void DisableCanvases() {
 			foreach (Canvas canvas in Canvases) {
 				canvas.enabled = false;
 			}
+			m_OnDisableCanvases.Invoke();
 		}
 
 		private void ShowUI(bool animated, Action onComplete = null) {

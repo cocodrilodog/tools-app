@@ -1,12 +1,14 @@
 namespace CocodriloDog.App {
 
+	using CocodriloDog.Core;
 	using CocodriloDog.MotionKit;
 	using System;
 	using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.AddressableAssets;
-    using UnityEngine.ResourceManagement.AsyncOperations;
+	using UnityEngine.Events;
+	using UnityEngine.ResourceManagement.AsyncOperations;
     using UnityEngine.ResourceManagement.ResourceProviders;
 	using UnityEngine.SceneManagement;
 
@@ -154,12 +156,22 @@ namespace CocodriloDog.App {
         [SerializeField]
         private AbstractSceneLoaderUI m_UI;
 
-        #endregion
+		[Space]
+
+		[UnityEventGroup("Events")]
+		[SerializeField]
+		private UnityEvent m_OnEnableCanvases;
+
+		[UnityEventGroup("Events")]
+		[SerializeField]
+		private UnityEvent m_OnDisableCanvases;
+
+		#endregion
 
 
-        #region Private Fields - Non Serialized
+		#region Private Fields - Non Serialized
 
-        [NonSerialized]
+		[NonSerialized]
 		private AsyncOperationHandle<SceneInstance> m_AsyncOperationHandle;
 
         [NonSerialized]
@@ -228,12 +240,14 @@ namespace CocodriloDog.App {
             foreach (Canvas canvas in Canvases) {
                 canvas.enabled = true;
             }
+			m_OnEnableCanvases.Invoke();
         }
 
         private void DisableCanvases() {
             foreach (Canvas canvas in Canvases) {
                 canvas.enabled = false;
             }
+			m_OnDisableCanvases.Invoke();
         }
 
         private void ShowUI(bool animated, Action onComplete = null) {
